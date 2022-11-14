@@ -11,22 +11,16 @@
                 <StackLayout class="stack" v-for="Name,index in monthsNames" :key="index" v-if="Name === Months.Name">
                     <label>{{Name}}</label>
                 </StackLayout>
-                <WrapLayout>
-                    <Label class="q" v-for="day in 7" :day="day" v-if="fnfirstweek(day)">{{Count}}</Label>
-                    <Label class="w" v-else>{{" "}}</Label>
-                    <Label :text = "d.day" class="e" v-for="d in monthdays">{{d.day}}</Label>
-                </WrapLayout>
-                <FlexboxLayout>
-                    <FlexboxLayout v-for="(d,index) in monthdays" :key = "index">
-                        <Label :text="d.day" textAlignment = "center"/>
-                    </FlexboxLayout>
-                </FlexboxLayout>
+                <StackLayout v-for="d in 7" :key = "d">
+                    <StackLayout>
+                        <label v-for="qwe in DayInWeek.length" v-if="WeekDays(d)">{{DayInWeek[qwe]}}</label> 
+                    </StackLayout>
+                </StackLayout>
         </StackLayout>
     </Page>
 </template>
 
 <script>
-
   export default {
     data() {
         return {
@@ -41,6 +35,7 @@
                 } ,
             Count: 0,
             monthdays:[],
+            DayInWeek:''
         };
     },
     
@@ -52,16 +47,30 @@
             this.monthdays = []
             for (let i = 1; i < this.Months.NOD + 1; ++i)
             {
-                this.monthdays.push({day:i})
+                this.monthdays.push({day:i,
+                DayOfWeek: new Date(this.Months.Year,this.Months.Number,i).getDay(),
+                DayInWeek: this.DayInWeek
+                })
             }
             console.log(this.monthdays)
+        },
+        WeekDays(j)
+        {
+            for (let i = 1; i < this.Months.NOD + 1; ++i)
+            {
+                if(this.monthdays.DayOfWeek == j)
+                {
+                    this.DayInWeek.push(this.monthdays.DayOfWeek) 
+                }
+            }
+            console.log(this.DayInWeek)
         },
         fnday(day)
         {
             let num = new Date(this.Months.Year,this.Months.Number,day).getDay()
             return num 
         },
-        fnfirstweek(day) //функция должна помочь вывести первую неделю в месяце, а затем в зависимости от Count выведутся последующие дни
+        fnfirstweek(day) //функция должна помочь вывести первую неделю в месяце, а затем в зависимости от Count выведутся последующие днgи
         {
             let status = null
             for(let i = 1; i < day+1;++i)
@@ -92,6 +101,7 @@
         },
         Next()
         {
+            this.Count = 0
             if (this.Months.Number == 11)
             {
                 this.Months.Number = 0
@@ -110,6 +120,7 @@
         },
         Back()
         {
+            this.Count = 0
             if (this.Months.Number == 0)
             {
                 this.Months.Number = 11
